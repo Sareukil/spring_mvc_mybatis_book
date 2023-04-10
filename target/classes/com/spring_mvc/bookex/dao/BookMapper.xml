@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.spring_mvc.bookex.dao.IBookDAO">
+
+  <!-- 전체 상품 조회-->
+  <resultMap id="bkResult" type="com.spring_mvc.bookex.model.BookVO">
+    <result property="bookNo" column="bookNo"/>
+    <result property="bookName" column="bookName"/>
+    <result property="bookAuthor" column="bookAuthor"/>
+    <result property="bookPrice" column="bookPrice"/>
+    <result property="bookDate" column="bookDate"/>
+    <result property="bootStock" column="bootStock"/>
+  </resultMap>
+
+  <select id="listAllBook" resultMap="bkResult">
+    SELECT * FROM book ORDER BY bookNo
+  </select>
+  
+  <insert id="insertBook" parameterType="com.spring_mvc.bookex.model.BookVO">
+    INSERT INTO book(bookNo,bookName,bookAuthor,bookPrice,bookDate,bootStock)
+    VALUES(#{bookNo},#{bookName},#{bookAuthor},#{bookPrice},#{bookDate},#{bootStock})
+  </insert>
+
+  <select id="deailViewBook" parameterType="string" resultType="com.spring_mvc.bookex.model.BookVO">
+    SELECT * FROM book WHERE bookNo = #{bookNo}
+  </select>
+
+  <update id="updateBook" parameterType="com.spring_mvc.bookex.model.BookVO">
+  	UPDATE book
+  	SET bookName=#{bookName},bookAuthor=#{bookAuthor},bookPrice=#{bookPrice},
+    bookDate=#{bookDate},bootStock=#{bootStock}
+  	WHere bookNo=#{bookNo}
+  </update>
+
+  <delete id="deleteBook" parameterType="com.spring_mvc.bookex.model.BookVO">
+    DELETE FROM book WHERE bookNo=#{bookNo}
+  </delete>
+
+  <select id="bookNoCheck" parameterType="string" resultType="string">
+    SELECT bookNo FROM book WHERE bookNo=#{bookNo}
+  </select>
+
+  <select id="bookSearch" parameterType="hashmap" resultMap="bkResult">
+    SELECT * FROM book WHERE
+    <choose>
+      <when test="type != null and type.equals('bookName')">
+        bookName Like CONCAT('%',#{keyword},'%')
+      </when>
+      <when test="type != null and type.equals('bookAuthor')">
+        bookAuthor Like CONCAT('%',#{keyword},'%')
+      </when>
+    </choose>
+  </select>
+ </mapper>
